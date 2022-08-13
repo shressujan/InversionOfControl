@@ -13,6 +13,6 @@
         }
 
         public VehicleInfoDto VehicleInfoDto { get; set; }
-        public DateTime EntryDateTime { get; set; }
+        public DateTime EntryDateTime { get; set; } = DateTime.UtcNow;
     }
 }

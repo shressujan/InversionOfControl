@@ -1,20 +1,22 @@
-﻿using System.Collections.Immutable;
-using Api;
+﻿using Api;
 using Api.Models;
 using AutoMapper;
 using Service.DataAccess;
 using Service.DataAccess.Models;
+using Service.ValueProvider;
 
 namespace Service
 {
     public class ParkingService: IParkingApi
     {
         private readonly IParkingRepository _parkingRepository;
+        private readonly IValueProvider<IReadOnlyList<VehicleParkingInfoDto>> _vehicleParkingInfoProvider;
         private readonly IMapper _mapper;
 
-        public ParkingService(IParkingRepository parkingRepository, IMapper mapper)
+        public ParkingService(IParkingRepository parkingRepository, IValueProvider<IReadOnlyList<VehicleParkingInfoDto>> parkingInfoProvider, IMapper mapper)
         {
             _parkingRepository = parkingRepository ?? throw new ArgumentNullException(nameof(parkingRepository));
+            _vehicleParkingInfoProvider = parkingInfoProvider ?? throw new ArgumentNullException(nameof(parkingInfoProvider));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -38,9 +40,9 @@ namespace Service
             return vehicleParkingInfo;
         }
 
-        public async Task<IReadOnlyList<VehicleParkingInfo>> GetAllParkingInformation()
+        public IReadOnlyList<VehicleParkingInfo> GetAllParkingInformation()
         {
-            var vehicleParkingInfoDtos = await _parkingRepository.GetAllVehiclesInParkingLot();
+            var vehicleParkingInfoDtos = _vehicleParkingInfoProvider.GetValue();
 
             var vehicleParkingInfos = _mapper.Map<List<VehicleParkingInfo>>(vehicleParkingInfoDtos);
 

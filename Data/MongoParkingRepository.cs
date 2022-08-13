@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+﻿using Api.Models;
 using Service.DataAccess;
 using Service.DataAccess.Models;
 
@@ -7,9 +7,26 @@ namespace Data
     public class MongoParkingRepository: IParkingRepository
     {
         private readonly IDictionary<string, VehicleParkingInfoDto> _parkedVehiclesInfo = new Dictionary<string, VehicleParkingInfoDto>(StringComparer.OrdinalIgnoreCase);
-        public Task<List<VehicleParkingInfoDto>> GetAllVehiclesInParkingLot()
+        public IReadOnlyList<VehicleParkingInfoDto> GetAllVehiclesInParkingLot()
         {
-            return Task.FromResult(_parkedVehiclesInfo.Values.ToList());
+            for (var i = 0; i < 100; i++)
+            {
+                var lisencePlateNumber = i + "A";
+                var vehicleMake = VehicleMake.HONDA;
+                var vehicleModel = VehicleModel.ACCORD;
+                var vehicleColor = Color.BLACK;
+                var vehicleParkingInfoDto = new VehicleParkingInfoDto(
+                    new VehicleInfoDto()
+                    {
+                        LisencePlateNumber = lisencePlateNumber,
+                        VehicleMake = vehicleMake,
+                        VehicleModel = vehicleModel,
+                        VehicleColor = vehicleColor
+                    });
+
+                _parkedVehiclesInfo[lisencePlateNumber] = vehicleParkingInfoDto;
+            }
+            return _parkedVehiclesInfo.Values.ToList();
         }
 
         public Task Park(VehicleParkingInfoDto parkedVehicle)

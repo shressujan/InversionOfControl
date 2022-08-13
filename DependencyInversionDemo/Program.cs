@@ -1,10 +1,11 @@
 using System.Reflection;
 using Api;
-using AutoMapper;
 using Data;
 using Service;
 using Service.DataAccess;
+using Service.DataAccess.Models;
 using Service.Mapper;
+using Service.ValueProvider;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IParkingRepository, MongoParkingRepository>();
+builder.Services.AddSingleton(sp => 
+    new VehicleParkingInfoDtoProvider(
+        sp.GetRequiredService<IParkingRepository>()
+        ));
+builder.Services.AddHostedService(sp => sp.GetRequiredService<VehicleParkingInfoDtoProvider>());
+builder.Services.AddSingleton<IValueProvider<IReadOnlyList<VehicleParkingInfoDto>>>(sp => sp.GetRequiredService<VehicleParkingInfoDtoProvider>());
 builder.Services.AddSingleton<IParkingApi, ParkingService>();
+
+// builder.Services.AddHostedService<VehicleParkingInfoDtoProvider>();
+// builder.Services.AddSingleton<IValueProvider<VehicleParkingInfoDtos>, VehicleParkingInfoDtoProvider>();
+// builder.Services.AddSingleton<IParkingApi, ParkingService>();
 
 static Assembly[] GetAutoMapperAssembliesToScan()
     => new[]

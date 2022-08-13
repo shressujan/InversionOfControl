@@ -7,6 +7,6 @@ namespace Api
     {
         Task<VehicleParkingInfo> Park(VehicleInfo vehicle);
         Task<VehicleParkingInfo> GetParkingInformation(string lisencePlateNumber);
-        Task<IReadOnlyList<VehicleParkingInfo>> GetAllParkingInformation();
+        IReadOnlyList<VehicleParkingInfo> GetAllParkingInformation();
     }
 }

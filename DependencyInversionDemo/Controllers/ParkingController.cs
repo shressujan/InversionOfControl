@@ -29,7 +29,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("info/all")]
-        public Task<IReadOnlyList<VehicleParkingInfo>> GetAllParkingInformation()
+        public  IReadOnlyList<VehicleParkingInfo> GetAllParkingInformation()
         {
             return _parkingApi.GetAllParkingInformation();
         }

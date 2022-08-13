@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-using Api.Models;
-using Service.DataAccess.Models;
+﻿using Service.DataAccess.Models;
 
 namespace Service.DataAccess
 {
@@ -10,7 +8,7 @@ namespace Service.DataAccess
         /// Get Information of all vehicles currently parked in the parking lot.
         /// </summary>
         /// <returns></returns>
-        Task<List<VehicleParkingInfoDto>> GetAllVehiclesInParkingLot();
+        IReadOnlyList<VehicleParkingInfoDto> GetAllVehiclesInParkingLot();
 
         /// <summary>
         /// Save the entry date time and vehicle information when a vehicle enters parking lot.
