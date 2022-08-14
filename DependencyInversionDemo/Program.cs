@@ -1,10 +1,12 @@
 using System.Reflection;
 using Api;
 using Data;
+using Quartz;
 using Service;
 using Service.DataAccess;
 using Service.DataAccess.Models;
 using Service.Mapper;
+using Service.Scheduler.Job;
 using Service.ValueProvider;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,18 +18,37 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Add repositories
 builder.Services.AddSingleton<IParkingRepository, MongoParkingRepository>();
+
+//Add value providers
 builder.Services.AddSingleton(sp => 
     new VehicleParkingInfoDtoProvider(
         sp.GetRequiredService<IParkingRepository>()
         ));
 builder.Services.AddHostedService(sp => sp.GetRequiredService<VehicleParkingInfoDtoProvider>());
 builder.Services.AddSingleton<IValueProvider<IReadOnlyList<VehicleParkingInfoDto>>>(sp => sp.GetRequiredService<VehicleParkingInfoDtoProvider>());
+builder.Services.AddSingleton<IValueProviderForceUpdate<IReadOnlyList<VehicleParkingInfoDto>>>(sp => sp.GetRequiredService<VehicleParkingInfoDtoProvider>());
 builder.Services.AddSingleton<IParkingApi, ParkingService>();
 
 // builder.Services.AddHostedService<VehicleParkingInfoDtoProvider>();
 // builder.Services.AddSingleton<IValueProvider<VehicleParkingInfoDtos>, VehicleParkingInfoDtoProvider>();
 // builder.Services.AddSingleton<IParkingApi, ParkingService>();
+
+//Add quartz
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+    var jobKey = new JobKey("RefreshJob");
+    q.AddJob<RefreshJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("RefreshJob-trigger")
+        .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(09,51)));
+});
+
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 static Assembly[] GetAutoMapperAssembliesToScan()
     => new[]

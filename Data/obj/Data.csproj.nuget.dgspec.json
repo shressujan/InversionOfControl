@@ -166,6 +166,10 @@
             "Microsoft.AspNetCore.Hosting.Abstractions": {
               "target": "Package",
               "version": "[2.2.0, )"
+            },
+            "Quartz": {
+              "target": "Package",
+              "version": "[3.4.0, )"
             }
           },
           "imports": [

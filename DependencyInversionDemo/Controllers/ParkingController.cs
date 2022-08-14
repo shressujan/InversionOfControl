@@ -22,8 +22,14 @@ namespace WebApi.Controllers
             return _parkingApi.Park(vehicle);
         }
 
+        [HttpGet("leave")]
+        public Task<VehicleParkingInfo?> Leave(string lisencePlateNumber)
+        {
+            return _parkingApi.Leave(lisencePlateNumber);
+        }
+
         [HttpGet("info")]
-        public Task<VehicleParkingInfo> GetParkingInformation(string lisencePlateNumber)
+        public Task<VehicleParkingInfo?> GetParkingInformation(string lisencePlateNumber)
         {
             return _parkingApi.GetParkingInformation(lisencePlateNumber);
         }

@@ -22,5 +22,12 @@ namespace Service.DataAccess
         /// <param name="lisencePlateNumber"></param>
         /// <returns></returns>
         Task<VehicleParkingInfoDto> GetVehicleParkingInfo(string lisencePlateNumber);
+
+        /// <summary>
+        /// Removes parking information of vehicle for requested lisence plate number.
+        /// </summary>
+        /// <param name="lisencePlateNumber"></param>
+        /// <returns></returns>
+        Task<VehicleParkingInfoDto> RemoveVehicleParkingInfo(string lisencePlateNumber);
     }
 }

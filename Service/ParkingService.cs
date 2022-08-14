@@ -31,14 +31,33 @@ namespace Service
             return vehicleParkingInfo;
         }
 
-        public async Task<VehicleParkingInfo> GetParkingInformation(string lisencePlateNumber)
+        public async Task<VehicleParkingInfo?> GetParkingInformation(string lisencePlateNumber)
         {
-            var vehicleParkingInfoDto = await _parkingRepository.GetVehicleParkingInfo(lisencePlateNumber);
+            var vehicleParkingInfoDto = await _parkingRepository.GetVehicleParkingInfo(lisencePlateNumber).ConfigureAwait(false);
 
-            var vehicleParkingInfo = _mapper.Map<VehicleParkingInfo>(vehicleParkingInfoDto);
+            VehicleParkingInfo? vehicleParkingInfo = null;
+
+            if (vehicleParkingInfoDto != null) 
+                vehicleParkingInfo = _mapper.Map<VehicleParkingInfo>(vehicleParkingInfoDto);
 
             return vehicleParkingInfo;
         }
+
+        public async Task<VehicleParkingInfo?> Leave(string lisencePlateNumber)
+        {
+            var vehicleParkingInfo = await GetParkingInformation(lisencePlateNumber);
+
+            if (vehicleParkingInfo != null)
+            {
+                var vehicleParkingInfoDto = await _parkingRepository.RemoveVehicleParkingInfo(lisencePlateNumber);
+                vehicleParkingInfo = _mapper.Map<VehicleParkingInfo>(vehicleParkingInfoDto);
+
+                return vehicleParkingInfo;
+            }
+
+            return null;
+        }
+
 
         public IReadOnlyList<VehicleParkingInfo> GetAllParkingInformation()
         {

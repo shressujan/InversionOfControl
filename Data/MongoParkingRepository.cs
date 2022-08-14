@@ -9,6 +9,9 @@ namespace Data
         private readonly IDictionary<string, VehicleParkingInfoDto> _parkedVehiclesInfo = new Dictionary<string, VehicleParkingInfoDto>(StringComparer.OrdinalIgnoreCase);
         public IReadOnlyList<VehicleParkingInfoDto> GetAllVehiclesInParkingLot()
         {
+            if (_parkedVehiclesInfo.Any()) 
+                return _parkedVehiclesInfo.Values.ToList();
+
             for (var i = 0; i < 100; i++)
             {
                 var lisencePlateNumber = i + "A";
@@ -26,6 +29,7 @@ namespace Data
 
                 _parkedVehiclesInfo[lisencePlateNumber] = vehicleParkingInfoDto;
             }
+
             return _parkedVehiclesInfo.Values.ToList();
         }
 
@@ -44,6 +48,18 @@ namespace Data
 
             // log failure and return completed task
             return Task.CompletedTask;
+        }
+
+        public Task<VehicleParkingInfoDto> RemoveVehicleParkingInfo(string lisencePlateNumber)
+        {
+            if (_parkedVehiclesInfo.TryGetValue(lisencePlateNumber, out var vehicleParkingInfoDto))
+            {
+                _parkedVehiclesInfo.Remove(lisencePlateNumber);
+
+                return Task.FromResult(vehicleParkingInfoDto);
+            }
+
+            return null;
         }
 
         public Task<VehicleParkingInfoDto> GetVehicleParkingInfo(string lisencePlateNumber)

@@ -20,5 +20,7 @@
 
         public VehicleInfo VehicleInfo { get; set; }
         public DateTime EntryDateTime { get; set; }
+
+        public DateTime RefreshDateTime { get; set; }
     }
 }
